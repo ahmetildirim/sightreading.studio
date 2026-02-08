@@ -21,7 +21,7 @@ type NotePitch = {
 
 type MeasureData = {
   xml: string;
-  expectedMidi: Array<number | null>;
+  expectedMidi: number[];
 };
 
 const toMidi = (step: keyof typeof STEP_TO_SEMITONE, octave: number) =>
@@ -80,7 +80,6 @@ const generateRhythm = (allowedDurations: number[], notesCount: number, rng: Rng
 
 type BuildMeasureInput = {
   rangePreset: RangePreset;
-  rhythmPreset: number[];
   notesCount: number;
   measureNumber: number;
   includeAttributes: boolean;
@@ -89,7 +88,6 @@ type BuildMeasureInput = {
 
 const buildMeasureXml = ({
   rangePreset,
-  rhythmPreset,
   notesCount,
   measureNumber,
   includeAttributes,
@@ -97,7 +95,7 @@ const buildMeasureXml = ({
 }: BuildMeasureInput): MeasureData => {
   const { minMidi, maxMidi, clef } = rangePreset;
   const notePool = buildNaturalNotesInRange(minMidi, maxMidi);
-  const durations = generateRhythm(rhythmPreset, notesCount, rng);
+  const durations = generateRhythm([4], notesCount, rng);
 
   const notes = durations.map((duration) => {
     const pitch = randomChoice(notePool, rng);
@@ -151,7 +149,7 @@ type BuildScoreInput = {
 
 type BuildScoreOutput = {
   xml: string;
-  expected: Array<number | null>;
+  expected: number[];
 };
 
 export const buildScore = ({
@@ -161,7 +159,7 @@ export const buildScore = ({
   seed = Date.now(),
 }: BuildScoreInput): BuildScoreOutput => {
   const measures: string[] = [];
-  const expected: Array<number | null> = [];
+  const expected: number[] = [];
   let remainingNotes = totalNotes;
   let measureNumber = 1;
   const rng = createRng(seed);
@@ -170,7 +168,6 @@ export const buildScore = ({
     const count = Math.min(notesPerMeasure, remainingNotes);
     const data = buildMeasureXml({
       rangePreset,
-      rhythmPreset: [4],
       notesCount: count,
       measureNumber,
       includeAttributes: measureNumber === 1,

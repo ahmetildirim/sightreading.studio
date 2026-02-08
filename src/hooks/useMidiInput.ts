@@ -3,11 +3,12 @@ import { useEffect, useRef, useState } from "react";
 type MidiHandlers = {
   onNoteOn?: (note: number, velocity: number) => void;
   onNoteOff?: (note: number) => void;
+  onAllNotesOff?: () => void;
 };
 
-export default function useMidiInput({ onNoteOn, onNoteOff }: MidiHandlers) {
+export default function useMidiInput({ onNoteOn, onNoteOff, onAllNotesOff }: MidiHandlers) {
   const [midiStatus, setMidiStatus] = useState("MIDI: not connected");
-  const noteOffTimerRef = useRef<number | null>(null);
+  const activeNotesRef = useRef<Set<number>>(new Set());
 
   useEffect(() => {
     let activeInputs: MIDIInput[] = [];
@@ -23,22 +24,19 @@ export default function useMidiInput({ onNoteOn, onNoteOff }: MidiHandlers) {
       const command = status & 0xf0;
 
       if (command === 0x80 || (command === 0x90 && velocity === 0)) {
-        if (noteOffTimerRef.current) {
-          window.clearTimeout(noteOffTimerRef.current);
+        activeNotesRef.current.delete(note);
+        onNoteOff?.(note);
+        if (activeNotesRef.current.size === 0) {
+          onAllNotesOff?.();
         }
-        // Short delay smooths out rapid note-off chatter from some devices.
-        noteOffTimerRef.current = window.setTimeout(() => {
-          onNoteOff?.(note);
-        }, 120);
         return;
       }
 
       if (command !== 0x90) return;
-
-      if (noteOffTimerRef.current) {
-        window.clearTimeout(noteOffTimerRef.current);
+      if (activeNotesRef.current.has(note)) {
+        return;
       }
-
+      activeNotesRef.current.add(note);
       onNoteOn?.(note, velocity);
     };
 
@@ -60,8 +58,9 @@ export default function useMidiInput({ onNoteOn, onNoteOff }: MidiHandlers) {
       activeInputs.forEach((input) => {
         input.onmidimessage = null;
       });
+      activeNotesRef.current.clear();
     };
-  }, [onNoteOff, onNoteOn]);
+  }, [onAllNotesOff, onNoteOff, onNoteOn]);
 
   return midiStatus;
 }

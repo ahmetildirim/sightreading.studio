@@ -1,64 +1,88 @@
-import { useCallback, useMemo, useRef, useState } from "react";
-import Staff from "./components/Staff";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Staff, { type StaffHandle } from "./components/Staff";
 import { CURSOR_COLORS, RANGE_PRESETS } from "./config/presets";
 import useMidiInput from "./hooks/useMidiInput";
+import useSightReadingSession from "./hooks/useSightReadingSession";
+import { buildScore } from "./lib/musicxml";
+
+type CursorState = "idle" | "correct" | "wrong";
 
 const CURSOR_STYLES = {
-  correct: { color: CURSOR_COLORS.correct, alpha: 0.35 },
+  idle: { color: CURSOR_COLORS.idle, alpha: 0.6 },
+  correct: { color: CURSOR_COLORS.correct, alpha: 0.4 },
   wrong: { color: CURSOR_COLORS.wrong, alpha: 0.45 },
 } as const;
 
-export default function App() {
-  const expectedRef = useRef<Array<number | null>>([]);
-  const expectedIndexRef = useRef(0);
-  const osmdRef = useRef<import("opensheetmusicdisplay").OpenSheetMusicDisplay | null>(null);
+const MIN_NOTES = 4;
+const MAX_NOTES = 200;
+const NOTES_PER_MEASURE = 4;
 
-  const [rangeLabel, setRangeLabel] = useState("Treble (C4–G5)");
+const rangeLabels = Object.keys(RANGE_PRESETS);
+
+function clampNotes(value: number): number {
+  return Math.min(MAX_NOTES, Math.max(MIN_NOTES, value));
+}
+
+export default function App() {
+  const staffRef = useRef<StaffHandle | null>(null);
+
+  const [rangeLabel, setRangeLabel] = useState(rangeLabels[0] ?? "Treble (C4-G5)");
   const [totalNotes, setTotalNotes] = useState(100);
   const [seed, setSeed] = useState(1);
-  const [isWrong, setIsWrong] = useState(false);
+  const [cursorState, setCursorState] = useState<CursorState>("idle");
 
-  const rangePreset = useMemo(() => RANGE_PRESETS[rangeLabel], [rangeLabel]);
-  const cursorStyle = isWrong ? CURSOR_STYLES.wrong : CURSOR_STYLES.correct;
-
-  const handleExpectedChange = useCallback((expected: Array<number | null>) => {
-    expectedRef.current = expected;
-    expectedIndexRef.current = 0;
-    setIsWrong(false);
-  }, []);
-
-  const handleOsmdReady = useCallback(
-    (osmd: import("opensheetmusicdisplay").OpenSheetMusicDisplay) => {
-      osmdRef.current = osmd;
-    },
-    []
+  const selectedRange = RANGE_PRESETS[rangeLabel] ?? RANGE_PRESETS[rangeLabels[0]];
+  const scoreData = useMemo(
+    () =>
+      buildScore({
+        rangePreset: selectedRange,
+        notesPerMeasure: NOTES_PER_MEASURE,
+        totalNotes,
+        seed,
+      }),
+    [selectedRange, seed, totalNotes]
   );
 
-  const handleNoteOn = useCallback((note: number) => {
-    const expectedNotes = expectedRef.current;
-    let index = expectedIndexRef.current;
+  const { reset, handleNoteOn, handleNoteOff } = useSightReadingSession();
 
-    while (index < expectedNotes.length && expectedNotes[index] === null) {
-      index += 1;
-    }
+  useEffect(() => {
+    reset(scoreData.expected);
+    setCursorState("idle");
+    staffRef.current?.resetCursor();
+  }, [reset, scoreData.expected]);
 
-    if (index >= expectedNotes.length) return;
+  const onMidiNoteOn = useCallback(
+    (note: number) => {
+      const result = handleNoteOn(note);
+      if (result === "armed") {
+        setCursorState("correct");
+      } else if (result === "wrong") {
+        setCursorState("wrong");
+      }
+    },
+    [handleNoteOn]
+  );
 
-    const expectedMidi = expectedNotes[index];
-    if (note === expectedMidi) {
-      expectedIndexRef.current = index + 1;
-      setIsWrong(false);
-      osmdRef.current?.cursor?.next();
-    } else {
-      setIsWrong(true);
-    }
+  const onMidiNoteOff = useCallback(
+    (note: number) => {
+      const result = handleNoteOff(note);
+      if (result === "advanced" || result === "complete") {
+        staffRef.current?.nextCursor();
+      }
+    },
+    [handleNoteOff]
+  );
+
+  const onMidiAllNotesOff = useCallback(() => {
+    setCursorState("idle");
   }, []);
 
-  const handleNoteOff = useCallback(() => {
-    setIsWrong(false);
-  }, []);
-
-  const midiStatus = useMidiInput({ onNoteOn: handleNoteOn, onNoteOff: handleNoteOff });
+  const midiStatus = useMidiInput({
+    onNoteOn: onMidiNoteOn,
+    onNoteOff: onMidiNoteOff,
+    onAllNotesOff: onMidiAllNotesOff,
+  });
+  const cursorStyle = CURSOR_STYLES[cursorState];
 
   return (
     <main className="app">
@@ -79,7 +103,7 @@ export default function App() {
               value={rangeLabel}
               onChange={(event) => setRangeLabel(event.target.value)}
             >
-              {Object.keys(RANGE_PRESETS).map((label) => (
+              {rangeLabels.map((label) => (
                 <option key={label} value={label}>
                   {label}
                 </option>
@@ -91,12 +115,12 @@ export default function App() {
             <input
               className="number"
               type="number"
-              min={4}
-              max={200}
+              min={MIN_NOTES}
+              max={MAX_NOTES}
               value={totalNotes}
               onChange={(event) => {
                 const value = Number(event.target.value);
-                setTotalNotes(Number.isNaN(value) ? 100 : Math.min(200, Math.max(4, value)));
+                setTotalNotes(Number.isNaN(value) ? 100 : clampNotes(value));
               }}
             />
           </label>
@@ -105,14 +129,7 @@ export default function App() {
 
       <section className="sheet">
         <div className="osmd-wrapper">
-          <Staff
-            rangePreset={rangePreset}
-            totalNotes={totalNotes}
-            seed={seed}
-            onExpectedChange={handleExpectedChange}
-            onOsmdReady={handleOsmdReady}
-            cursorStyle={cursorStyle}
-          />
+          <Staff ref={staffRef} scoreXml={scoreData.xml} cursorStyle={cursorStyle} />
         </div>
       </section>
 

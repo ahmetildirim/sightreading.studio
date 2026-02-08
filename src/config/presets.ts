@@ -11,6 +11,7 @@ export const RANGE_PRESETS: Record<string, RangePreset> = {
 };
 
 export const CURSOR_COLORS = {
-  correct: "#1f8a5b",
-  wrong: "#c2281b",
+  idle: "#6daaf5",
+  correct: "#76ffa8",
+  wrong: "#f76666",
 } as const;

@@ -1,7 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+} from "react";
 import { OpenSheetMusicDisplay } from "opensheetmusicdisplay";
-import { buildScore } from "../lib/musicxml";
-import type { RangePreset } from "../config/presets";
 
 type CursorStyle = {
   color: string;
@@ -9,79 +13,86 @@ type CursorStyle = {
 };
 
 type StaffProps = {
-  rangePreset: RangePreset;
-  totalNotes: number;
-  seed: number;
-  onExpectedChange: (expected: Array<number | null>) => void;
-  onOsmdReady?: (osmd: OpenSheetMusicDisplay) => void;
+  scoreXml: string;
   cursorStyle: CursorStyle;
 };
 
-export default function Staff({
-  rangePreset,
-  totalNotes,
-  seed,
-  onExpectedChange,
-  onOsmdReady,
-  cursorStyle,
-}: StaffProps) {
+export type StaffHandle = {
+  nextCursor: () => void;
+  resetCursor: () => void;
+};
+
+const DEFAULT_ZOOM = 2;
+
+const Staff = forwardRef<StaffHandle, StaffProps>(function Staff(
+  { scoreXml, cursorStyle },
+  ref
+) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const osmdRef = useRef<OpenSheetMusicDisplay | null>(null);
+  const cursorStyleRef = useRef<CursorStyle>(cursorStyle);
 
-  const scoreData = useMemo(
-    () =>
-      buildScore({
-        rangePreset,
-        notesPerMeasure: 4,
-        totalNotes,
-        seed,
-      }),
-    [rangePreset, totalNotes, seed]
-  );
-
-  const applyCursorStyle = useCallback(() => {
+  const applyCursorStyle = useCallback((style?: CursorStyle) => {
     const cursor = osmdRef.current?.cursor;
     if (!cursor) return;
+    const nextStyle = style ?? cursorStyleRef.current;
     cursor.CursorOptions = {
       ...cursor.CursorOptions,
-      color: cursorStyle.color,
-      alpha: cursorStyle.alpha,
+      color: nextStyle.color,
+      alpha: nextStyle.alpha,
     };
     cursor.show();
-  }, [cursorStyle]);
+  }, []);
 
-  const renderScore = useCallback(async () => {
-    if (!containerRef.current) return;
+  const ensureOsmd = useCallback(() => {
+    if (!containerRef.current) return null;
     if (!osmdRef.current) {
       osmdRef.current = new OpenSheetMusicDisplay(containerRef.current, {
         drawTitle: false,
         drawPartNames: false,
         drawMeasureNumbers: false,
         autoResize: true,
+        followCursor: true,
       });
     }
+    return osmdRef.current;
+  }, []);
 
-    await osmdRef.current.load(scoreData.xml);
-    osmdRef.current.zoom = 2;
-    osmdRef.current.render();
+  const renderScore = useCallback(async () => {
+    const osmd = ensureOsmd();
+    if (!osmd) return;
 
-    const cursor = osmdRef.current.cursor;
-    if (cursor) {
-      applyCursorStyle();
-      cursor.reset();
-    }
+    await osmd.load(scoreXml);
+    osmd.zoom = DEFAULT_ZOOM;
+    osmd.render();
 
-    onExpectedChange(scoreData.expected);
-    onOsmdReady?.(osmdRef.current);
-  }, [applyCursorStyle, onExpectedChange, onOsmdReady, scoreData]);
+    applyCursorStyle();
+    osmd.cursor?.reset();
+  }, [applyCursorStyle, ensureOsmd, scoreXml]);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      nextCursor: () => {
+        osmdRef.current?.cursor?.next();
+      },
+      resetCursor: () => {
+        osmdRef.current?.cursor?.reset();
+      },
+    }),
+    []
+  );
 
   useEffect(() => {
-    renderScore();
+    void renderScore();
   }, [renderScore]);
 
   useEffect(() => {
-    applyCursorStyle();
-  }, [applyCursorStyle]);
+    cursorStyleRef.current = cursorStyle;
+    applyCursorStyle(cursorStyle);
+  }, [applyCursorStyle, cursorStyle]);
 
   return <div id="osmd" className="osmd" ref={containerRef}></div>;
-}
+});
+
+export default Staff;
