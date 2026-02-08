@@ -2,13 +2,24 @@
  * Application presets and visual configuration.
  *
  * Centralizes the tunable parameters of the trainer:
- *   - Note range presets (which pitches to generate, which clef to display)
+ *   - Note range presets (which pitches to generate)
  *   - Cursor feedback styles (visual response to correct/incorrect input)
  *
  * To add a new practice range, append an entry to RANGE_PRESETS.
  */
 
-import type { CursorStyle, RangePreset } from "../types";
+import type { NoteName } from "../generator";
+
+interface CursorStyle {
+    color: string;
+    alpha: number;
+}
+
+export interface GeneratorPreset {
+    readonly label: string;
+    readonly minNote: NoteName;
+    readonly maxNote: NoteName;
+}
 
 // ---------------------------------------------------------------------------
 // Note range presets
@@ -17,14 +28,13 @@ import type { CursorStyle, RangePreset } from "../types";
 /**
  * Predefined note ranges, ordered from beginner-friendly to advanced.
  *
- * Each preset constrains random note generation to a MIDI range and
- * specifies which clef to use for rendering. MIDI note numbers follow
- * the standard convention where middle C (C4) = 60.
+ * Each preset constrains random note generation to an inclusive
+ * natural-note range (for example C4 to G5).
  */
-export const RANGE_PRESETS: readonly RangePreset[] = [
-    { label: "Treble (C4–G5)", minMidi: 60, maxMidi: 79, clef: "treble" },
-    { label: "Treble Wide (A3–C6)", minMidi: 57, maxMidi: 84, clef: "treble" },
-    { label: "Bass (E2–C4)", minMidi: 40, maxMidi: 60, clef: "bass" },
+export const RANGE_PRESETS: readonly GeneratorPreset[] = [
+    { label: "Treble (C4–G5)", minNote: "C4", maxNote: "G5" },
+    { label: "Treble Wide (A3–C6)", minNote: "A3", maxNote: "C6" },
+    { label: "Bass (E2–C4)", minNote: "E2", maxNote: "C4" },
 ];
 
 // ---------------------------------------------------------------------------

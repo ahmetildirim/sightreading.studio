@@ -19,7 +19,6 @@ import {
   useRef,
 } from "react";
 import { OpenSheetMusicDisplay } from "opensheetmusicdisplay";
-import type { CursorStyle } from "../types";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -30,6 +29,11 @@ interface StaffProps {
   scoreXml: string;
   /** Visual style for the playback cursor. */
   cursorStyle: CursorStyle;
+}
+
+interface CursorStyle {
+  color: string;
+  alpha: number;
 }
 
 /** Imperative handle exposed to parent components via ref. */
@@ -46,15 +50,6 @@ export interface StaffHandle {
 
 /** Zoom level for the rendered score (2× for readability). */
 const SCORE_ZOOM = 2;
-
-/** OSMD configuration — static across the component's lifetime. */
-const OSMD_OPTIONS = {
-  drawTitle: false,
-  drawPartNames: false,
-  drawMeasureNumbers: false,
-  autoResize: true,
-  followCursor: true,
-} as const;
 
 // ---------------------------------------------------------------------------
 // Component
@@ -88,7 +83,16 @@ const Staff = forwardRef<StaffHandle, StaffProps>(function Staff(
   const getOrCreateOsmd = useCallback((): OpenSheetMusicDisplay | null => {
     if (osmdRef.current) return osmdRef.current;
     if (!containerRef.current) return null;
-    osmdRef.current = new OpenSheetMusicDisplay(containerRef.current, OSMD_OPTIONS);
+
+    osmdRef.current = new OpenSheetMusicDisplay(containerRef.current, {
+      drawMetronomeMarks: false,
+      drawTitle: false,
+      drawPartNames: false,
+      drawMeasureNumbers: false,
+      autoResize: true,
+      followCursor: true,
+    });
+
     return osmdRef.current;
   }, []);
 

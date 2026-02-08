@@ -16,11 +16,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import Staff, { type StaffHandle } from "./components/Staff";
-import { CURSOR_STYLES, RANGE_PRESETS } from "./config/presets";
+import { CURSOR_STYLES } from "./config/presets";
 import useMidiInput from "./hooks/useMidiInput";
 import useSightReadingSession from "./hooks/useSightReadingSession";
-import { generateScore } from "./lib/musicxml";
-import type { CursorStyle, RangePreset } from "./types";
+import {
+  NOTE_NAMES,
+  generateScore,
+  type NoteName,
+} from "./generator";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -29,7 +32,6 @@ import type { CursorStyle, RangePreset } from "./types";
 /** Feedback state that drives cursor color — one of the CURSOR_STYLES keys. */
 type CursorFeedback = "idle" | "correct" | "wrong";
 
-const NOTES_PER_MEASURE = 4;
 const MIN_TOTAL_NOTES = 4;
 const MAX_TOTAL_NOTES = 200;
 const DEFAULT_TOTAL_NOTES = 100;
@@ -48,7 +50,8 @@ export default function App() {
 
   // -- User settings --------------------------------------------------------
 
-  const [selectedPreset, setSelectedPreset] = useState<RangePreset>(RANGE_PRESETS[0]);
+  const [minNote, setMinNote] = useState<NoteName>("C4");
+  const [maxNote, setMaxNote] = useState<NoteName>("G5");
   const [totalNotes, setTotalNotes] = useState(DEFAULT_TOTAL_NOTES);
   const [seed, setSeed] = useState(1);
 
@@ -57,12 +60,12 @@ export default function App() {
   const score = useMemo(
     () =>
       generateScore({
-        rangePreset: selectedPreset,
-        notesPerMeasure: NOTES_PER_MEASURE,
-        totalNotes,
+        minNote,
+        maxNote,
+        noteCount: totalNotes,
         seed,
       }),
-    [selectedPreset, totalNotes, seed],
+    [minNote, maxNote, totalNotes, seed],
   );
 
   // -- Sight-reading session ------------------------------------------------
@@ -106,16 +109,18 @@ export default function App() {
 
   // -- Derived visual state -------------------------------------------------
 
-  const cursorStyle: CursorStyle = CURSOR_STYLES[cursorFeedback];
+  const cursorStyle = CURSOR_STYLES[cursorFeedback];
 
   // -- Render ---------------------------------------------------------------
 
   return (
     <main className="app">
       <ControlPanel
-        selectedPreset={selectedPreset}
+        minNote={minNote}
+        maxNote={maxNote}
         totalNotes={totalNotes}
-        onPresetChange={setSelectedPreset}
+        onMinNoteChange={setMinNote}
+        onMaxNoteChange={setMaxNote}
         onTotalNotesChange={setTotalNotes}
         onNewScore={() => setSeed((s) => s + 1)}
       />
@@ -136,9 +141,11 @@ export default function App() {
 // ---------------------------------------------------------------------------
 
 interface ControlPanelProps {
-  selectedPreset: RangePreset;
+  minNote: NoteName;
+  maxNote: NoteName;
   totalNotes: number;
-  onPresetChange: (preset: RangePreset) => void;
+  onMinNoteChange: (note: NoteName) => void;
+  onMaxNoteChange: (note: NoteName) => void;
   onTotalNotesChange: (count: number) => void;
   onNewScore: () => void;
 }
@@ -150,12 +157,19 @@ interface ControlPanelProps {
  * the same file because it has no independent reuse outside of App.
  */
 function ControlPanel({
-  selectedPreset,
+  minNote,
+  maxNote,
   totalNotes,
-  onPresetChange,
+  onMinNoteChange,
+  onMaxNoteChange,
   onTotalNotesChange,
   onNewScore,
 }: ControlPanelProps) {
+  const minIndex = NOTE_NAMES.indexOf(minNote);
+  const maxIndex = NOTE_NAMES.indexOf(maxNote);
+  const maxCandidates = NOTE_NAMES.filter((_, index) => index >= minIndex);
+  const minCandidates = NOTE_NAMES.filter((_, index) => index <= maxIndex);
+
   return (
     <header className="hero">
       <div>
@@ -173,18 +187,30 @@ function ControlPanel({
         </button>
 
         <label className="switch">
-          <span>Note range</span>
+          <span>Min note</span>
           <select
             className="select"
-            value={selectedPreset.label}
-            onChange={(e) => {
-              const preset = RANGE_PRESETS.find((p) => p.label === e.target.value);
-              if (preset) onPresetChange(preset);
-            }}
+            value={minNote}
+            onChange={(e) => onMinNoteChange(e.target.value as NoteName)}
           >
-            {RANGE_PRESETS.map((preset) => (
-              <option key={preset.label} value={preset.label}>
-                {preset.label}
+            {minCandidates.map((note) => (
+              <option key={note} value={note}>
+                {note}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="switch">
+          <span>Max note</span>
+          <select
+            className="select"
+            value={maxNote}
+            onChange={(e) => onMaxNoteChange(e.target.value as NoteName)}
+          >
+            {maxCandidates.map((note) => (
+              <option key={note} value={note}>
+                {note}
               </option>
             ))}
           </select>
