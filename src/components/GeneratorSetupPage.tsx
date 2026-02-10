@@ -43,7 +43,7 @@ export default function GeneratorSetupPage({
     onOpenSettings,
 }: GeneratorSetupPageProps) {
     return (
-        <div className="setup-page">
+        <div className="app-page setup-page">
             <AppTopBar
                 rightSlot={
                     <>
@@ -57,7 +57,7 @@ export default function GeneratorSetupPage({
 
                         <button
                             type="button"
-                            className="profile-button"
+                            className="icon-button"
                             aria-label="Open settings"
                             onClick={onOpenSettings}
                         >
@@ -70,17 +70,19 @@ export default function GeneratorSetupPage({
             <main className="setup-main">
                 <div className="setup-wrapper">
                     <header className="setup-intro">
-                        <h1>Generate training session</h1>
+                        <p className="section-kicker">Generator setup</p>
+                        <h1>Build your next sight-reading run</h1>
+                        <p>Monochrome precision mode with a focused, studio-style control surface.</p>
                     </header>
 
                     <section className="setup-card">
                         <div className="setup-section">
                             <div className="section-head">
-                                <h2>
-                                    <span className="material-symbols-outlined">piano</span>
-                                    Note range
-                                </h2>
-                                <span>{rangeSummary}</span>
+                                <div>
+                                    <p className="section-kicker">Pitch</p>
+                                    <h2>Note range</h2>
+                                </div>
+                                <span className="section-summary mono">{rangeSummary}</span>
                             </div>
 
                             <div className="key-grid">
@@ -124,10 +126,10 @@ export default function GeneratorSetupPage({
 
                         <div className="setup-section">
                             <div className="section-head">
-                                <h2>
-                                    <span className="material-symbols-outlined">queue_music</span>
-                                    Session length
-                                </h2>
+                                <div>
+                                    <p className="section-kicker">Length</p>
+                                    <h2>Session count</h2>
+                                </div>
                             </div>
 
                             <label className="notes-label" htmlFor="number-of-notes-input">
@@ -165,6 +167,20 @@ export default function GeneratorSetupPage({
                                     <span className="material-symbols-outlined">add</span>
                                 </button>
                             </div>
+                        </div>
+
+                        <div className="session-preview">
+                            <h3>Session preview</h3>
+                            <dl>
+                                <div>
+                                    <dt>Range</dt>
+                                    <dd className="mono">{rangeSummary}</dd>
+                                </div>
+                                <div>
+                                    <dt>Total</dt>
+                                    <dd className="mono">{totalNotes} notes</dd>
+                                </div>
+                            </dl>
                         </div>
 
                         <div className="setup-actions">

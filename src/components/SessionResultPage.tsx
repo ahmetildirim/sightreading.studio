@@ -39,7 +39,7 @@ export default function SessionResultPage({
     }, [onTryAgain]);
 
     return (
-        <div className="result-page">
+        <div className="app-page result-page">
             <AppTopBar />
 
             <main className="result-main">
@@ -49,7 +49,9 @@ export default function SessionResultPage({
                     </div>
 
                     <header className="result-intro">
+                        <p className="section-kicker">Session report</p>
                         <h1>Session complete</h1>
+                        <p className="mono">{sessionId}</p>
                     </header>
 
                     <div className="result-metrics">
@@ -77,7 +79,7 @@ export default function SessionResultPage({
                     </div>
 
                     <section className="result-improvements">
-                        <h3>Areas for improvement</h3>
+                        <h3>Focus notes</h3>
 
                         {improvements.length === 0 ? (
                             <div className="result-improvement-row empty">
@@ -110,8 +112,6 @@ export default function SessionResultPage({
                             <span>Try again</span>
                         </button>
                     </div>
-
-                    {/* <footer className="result-footer-text">Session ID: {sessionId}</footer> */}
                 </section>
             </main>
         </div>

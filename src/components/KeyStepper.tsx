@@ -17,15 +17,25 @@ export default function KeyStepper({
         <div className="key-stepper">
             <span className="key-label">{label}</span>
             <div className="key-field">
-                <span>{value}</span>
-                <div className="key-step-buttons">
-                    <button type="button" onClick={onIncrease} aria-label={`Increase ${label}`}>
-                        <span className="material-symbols-outlined">expand_less</span>
-                    </button>
-                    <button type="button" onClick={onDecrease} aria-label={`Decrease ${label}`}>
-                        <span className="material-symbols-outlined">expand_more</span>
-                    </button>
-                </div>
+                <button
+                    type="button"
+                    className="stepper-control"
+                    onClick={onDecrease}
+                    aria-label={`Decrease ${label}`}
+                >
+                    <span className="material-symbols-outlined">remove</span>
+                </button>
+
+                <span className="mono">{value}</span>
+
+                <button
+                    type="button"
+                    className="stepper-control"
+                    onClick={onIncrease}
+                    aria-label={`Increase ${label}`}
+                >
+                    <span className="material-symbols-outlined">add</span>
+                </button>
             </div>
             <span className="key-hint">{hint}</span>
         </div>

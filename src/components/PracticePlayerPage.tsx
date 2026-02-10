@@ -68,12 +68,16 @@ export default function PracticePlayerPage({
     }, []);
 
     return (
-        <div className="practice-page">
+        <div className="app-page practice-page">
             <header className="practice-header">
                 <div className="practice-header-inner">
                     <div className="practice-session-meta">
-                        <h2>Practice session</h2>
-                        <p>Range: {rangeLabel} | {totalNotes} notes</p>
+                        <p className="section-kicker">Live session</p>
+                        <h2>Practice player</h2>
+                        <p>
+                            Range: <span className="mono">{rangeLabel}</span> |{" "}
+                            <span className="mono">{totalNotes} notes</span>
+                        </p>
                     </div>
 
                     <div className="practice-header-center">
@@ -117,7 +121,7 @@ export default function PracticePlayerPage({
                     <div className="practice-header-actions">
                         <button
                             type="button"
-                            className="practice-icon-button"
+                            className="practice-icon-button icon-button"
                             aria-label="Open settings"
                             onClick={onOpenSettings}
                         >
@@ -126,7 +130,7 @@ export default function PracticePlayerPage({
 
                         <button
                             type="button"
-                            className="practice-icon-button"
+                            className="practice-icon-button icon-button"
                             aria-label={fullscreenActive ? "Exit fullscreen" : "Enter fullscreen"}
                             onClick={onToggleFullscreen}
                         >
@@ -145,8 +149,10 @@ export default function PracticePlayerPage({
                     </div>
                 ) : null}
 
-                <div className="practice-score">
-                    <Staff ref={staffRef} scoreXml={scoreXml} cursorStyle={cursorStyle} />
+                <div className="practice-score-panel">
+                    <div className="practice-score">
+                        <Staff ref={staffRef} scoreXml={scoreXml} cursorStyle={cursorStyle} />
+                    </div>
                 </div>
             </main>
 

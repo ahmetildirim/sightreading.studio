@@ -21,12 +21,12 @@ export default function SettingsPage({
     onBack,
 }: SettingsPageProps) {
     return (
-        <div className="settings-page">
+        <div className="app-page settings-page">
             <AppTopBar
                 rightSlot={
                     <button type="button" className="back-button" onClick={onBack}>
-                        <span>Back to practice</span>
-                        <span className="material-symbols-outlined">close</span>
+                        <span className="material-symbols-outlined">chevron_left</span>
+                        <span>Back</span>
                     </button>
                 }
             />
@@ -34,6 +34,7 @@ export default function SettingsPage({
             <main className="settings-main">
                 <div className="settings-wrapper">
                     <header className="settings-intro">
+                        <p className="section-kicker">Control center</p>
                         <h1>Settings</h1>
                         <p>Configure your instrument and appearance.</p>
                     </header>
@@ -114,7 +115,7 @@ export default function SettingsPage({
                         </div>
 
                         <div className="settings-bottom-row">
-                            <span>Version 1.0.2 (build 8420)</span>
+                            <span>Version 2.0.0 (Monochrome Precision)</span>
                         </div>
                     </section>
 
