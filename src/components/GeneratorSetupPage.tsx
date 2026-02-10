@@ -71,7 +71,6 @@ export default function GeneratorSetupPage({
                 <div className="setup-wrapper">
                     <header className="setup-intro">
                         <h1>Generate training session</h1>
-                        <p>Configure your sight-reading session parameters.</p>
                     </header>
 
                     <section className="setup-card">
@@ -79,14 +78,14 @@ export default function GeneratorSetupPage({
                             <div className="section-head">
                                 <h2>
                                     <span className="material-symbols-outlined">piano</span>
-                                    Note Range
+                                    Note range
                                 </h2>
                                 <span>{rangeSummary}</span>
                             </div>
 
                             <div className="key-grid">
                                 <KeyStepper
-                                    label="Minimum Key"
+                                    label="Minimum key"
                                     value={minNote}
                                     hint="Lowest note to generate"
                                     onIncrease={onIncreaseMinNote}
@@ -94,7 +93,7 @@ export default function GeneratorSetupPage({
                                 />
 
                                 <KeyStepper
-                                    label="Maximum Key"
+                                    label="Maximum key"
                                     value={maxNote}
                                     hint="Highest note to generate"
                                     onIncrease={onIncreaseMaxNote}
@@ -127,12 +126,12 @@ export default function GeneratorSetupPage({
                             <div className="section-head">
                                 <h2>
                                     <span className="material-symbols-outlined">queue_music</span>
-                                    Session Length
+                                    Session length
                                 </h2>
                             </div>
 
                             <label className="notes-label" htmlFor="number-of-notes-input">
-                                Number of Notes
+                                Number of notes
                             </label>
                             <div className="notes-row">
                                 <button
@@ -175,21 +174,14 @@ export default function GeneratorSetupPage({
                                 onClick={onStartSession}
                             >
                                 <span className="material-symbols-outlined">play_arrow</span>
-                                <span>Start Session</span>
+                                <span>Start session</span>
                             </button>
                         </div>
                     </section>
-
-                    <div className="setup-links">
-                        <button type="button" className="ghost-link" onClick={onOpenSettings}>
-                            <span className="material-symbols-outlined">settings</span>
-                            Advanced Settings
-                        </button>
-                    </div>
                 </div>
             </main>
 
-            <footer className="setup-footer">© 2023 88keys.app. Minimalist Sight-Reading Trainer.</footer>
+            <footer className="setup-footer">© 2026 88keys.app. Minimalist sight-reading trainer.</footer>
         </div>
     );
 }

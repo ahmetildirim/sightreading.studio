@@ -16,6 +16,30 @@
         gap: 22px;
     }
 
+    .result-card {
+        gap: 22px;
+    }
+
+    .result-intro h1 {
+        font-size: clamp(1.8rem, 6vw, 2.8rem);
+    }
+
+    .result-intro p {
+        font-size: 1rem;
+    }
+
+    .result-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .result-metric-card {
+        min-height: 160px;
+    }
+
+    .result-improvements h3 {
+        font-size: 1.3rem;
+    }
+
     .setup-card {
         border-radius: 16px;
         gap: 22px;
@@ -56,6 +80,71 @@
 @media (max-width: 760px) {
     .practice-header {
         padding: 12px 14px 14px;
+    }
+
+    .result-main {
+        padding-top: 18px;
+        padding-bottom: 24px;
+    }
+
+    .result-card {
+        padding: 20px 14px;
+        gap: 18px;
+    }
+
+    .result-status-icon {
+        width: 58px;
+        height: 58px;
+    }
+
+    .result-status-icon .material-symbols-outlined {
+        font-size: 30px;
+    }
+
+    .result-metrics {
+        grid-template-columns: 1fr;
+    }
+
+    .result-metric-card {
+        min-height: 136px;
+        padding: 16px 12px;
+    }
+
+    .result-metric-value {
+        font-size: clamp(2rem, 10vw, 2.6rem);
+    }
+
+    .result-metric-value.time {
+        font-size: clamp(1.8rem, 8vw, 2.3rem);
+    }
+
+    .result-speed-delta {
+        font-size: 1rem;
+    }
+
+    .result-row-title {
+        font-size: 1.2rem;
+    }
+
+    .result-improvement-row p {
+        font-size: 0.95rem;
+    }
+
+    .result-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .result-secondary-button,
+    .result-primary-button {
+        width: 100%;
+        min-height: 52px;
+        font-size: 1.1rem;
+    }
+
+    .result-footer-text {
+        font-size: 0.9rem;
+        text-align: center;
     }
 
     .practice-session-meta h2 {

@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { StaffHandle } from "./components/Staff";
 import GeneratorSetupPage from "./components/GeneratorSetupPage";
 import PracticePlayerPage from "./components/PracticePlayerPage";
+import SessionResultPage from "./components/SessionResultPage";
 import SettingsPage from "./components/SettingsPage";
 import { CURSOR_STYLES } from "./config/presets";
 import {
@@ -28,6 +29,15 @@ import { clamp, formatTime, midiStatusLabel, midiToNoteLabel } from "./utils";
 function clampNoteCount(value: number): number {
   return clamp(value, MIN_TOTAL_NOTES, MAX_TOTAL_NOTES);
 }
+
+type SessionResult = {
+  accuracy: number;
+  speedNpm: number;
+  speedDelta: number;
+  improvements: { note: string; misses: number }[];
+  durationSeconds: number;
+  sessionId: string;
+};
 
 // ---------------------------------------------------------------------------
 // App
@@ -56,6 +66,11 @@ export default function App() {
   const [attempts, setAttempts] = useState(0);
   const [correctAttempts, setCorrectAttempts] = useState(0);
   const [missedMessage, setMissedMessage] = useState<string | null>(null);
+  const [autoFinishToken, setAutoFinishToken] = useState(0);
+  const [missedNoteCounts, setMissedNoteCounts] = useState<Record<string, number>>(
+    {},
+  );
+  const [sessionResult, setSessionResult] = useState<SessionResult | null>(null);
 
   // Extracted hooks
   const timer = useTimer();
@@ -115,6 +130,8 @@ export default function App() {
     setCompletedNotes(0);
     setAttempts(0);
     setCorrectAttempts(0);
+    setAutoFinishToken(0);
+    setMissedNoteCounts({});
     timer.reset();
     clearMissedMessage();
     staffRef.current?.resetCursor();
@@ -123,6 +140,8 @@ export default function App() {
   // MIDI event handlers
   const onNoteOn = useCallback(
     (note: number) => {
+      if (page !== "practice") return;
+
       if (page === "practice" && !timer.isRunning) {
         timer.start();
       }
@@ -139,6 +158,11 @@ export default function App() {
       }
 
       setCursorFeedback("wrong");
+      const noteLabel = midiToNoteLabel(note);
+      setMissedNoteCounts((value) => ({
+        ...value,
+        [noteLabel]: (value[noteLabel] ?? 0) + 1,
+      }));
       showMissedMessage(note);
     },
     [handleNoteOn, showMissedMessage, page, timer.isRunning, timer.start],
@@ -146,19 +170,25 @@ export default function App() {
 
   const onNoteOff = useCallback(
     (note: number) => {
+      if (page !== "practice") return;
+
       const result = handleNoteOff(note);
       if (result !== "advanced" && result !== "complete") return;
 
       staffRef.current?.nextCursor();
       setCompletedNotes((value) => Math.min(totalNotes, value + 1));
       setCursorFeedback("idle");
+      if (result === "complete") {
+        setAutoFinishToken((value) => value + 1);
+      }
     },
-    [handleNoteOff, totalNotes],
+    [handleNoteOff, page, totalNotes],
   );
 
   const onAllNotesOff = useCallback(() => {
+    if (page !== "practice") return;
     setCursorFeedback("idle");
-  }, []);
+  }, [page]);
 
   const midiStatus = useMidiInput({ onNoteOn, onNoteOff, onAllNotesOff });
 
@@ -180,7 +210,7 @@ export default function App() {
 
   const rangeSummary =
     minNote === "A0" && maxNote === "C8"
-      ? "Full Piano (A0 - C8)"
+      ? "Full piano (A0 - C8)"
       : `${minNote} - ${maxNote}`;
 
   // Note-range step handlers
@@ -210,14 +240,50 @@ export default function App() {
 
   // Navigation
   const startSession = useCallback(() => {
+    setAutoFinishToken(0);
+    setSessionResult(null);
     setSeed((value) => value + 1);
     setPage("practice");
   }, []);
 
   const finishSession = useCallback(() => {
-    timer.reset();
+    timer.stop();
+    const durationSeconds = Math.floor(timer.elapsedMs / 1000);
+    const speedNpm =
+      durationSeconds === 0
+        ? 0
+        : Math.round((completedNotes / Math.max(durationSeconds, 1)) * 60);
+    const speedDelta = speedNpm - 36;
+    const improvements = Object.entries(missedNoteCounts)
+      .map(([note, misses]) => ({ note, misses }))
+      .sort((left, right) => right.misses - left.misses)
+      .slice(0, 2);
+
+    setSessionResult({
+      accuracy,
+      speedNpm,
+      speedDelta,
+      improvements,
+      durationSeconds,
+      sessionId: `#88K-${String(seed).padStart(4, "0")}`,
+    });
+    setPage("results");
+  }, [accuracy, completedNotes, missedNoteCounts, seed, timer]);
+
+  useEffect(() => {
+    if (page !== "practice") return;
+    if (autoFinishToken === 0) return;
+    finishSession();
+  }, [autoFinishToken, finishSession, page]);
+
+  const newSetupFromResults = useCallback(() => {
     setPage("setup");
-  }, [timer.reset]);
+  }, []);
+
+  const retrySession = useCallback(() => {
+    setSeed((value) => value + 1);
+    setPage("practice");
+  }, []);
 
   const openSettings = useCallback((from: ReturnPage) => {
     setSettingsReturnPage(from);
@@ -277,6 +343,21 @@ export default function App() {
         missedMessage={missedMessage}
         onOpenSettings={() => openSettings("practice")}
         onFinish={finishSession}
+      />
+    );
+  }
+
+  if (page === "results" && sessionResult) {
+    return (
+      <SessionResultPage
+        accuracy={sessionResult.accuracy}
+        speedNpm={sessionResult.speedNpm}
+        speedDelta={sessionResult.speedDelta}
+        improvements={sessionResult.improvements}
+        durationLabel={formatTime(sessionResult.durationSeconds)}
+        sessionId={sessionResult.sessionId}
+        onNewSetup={newSetupFromResults}
+        onTryAgain={retrySession}
       />
     );
   }

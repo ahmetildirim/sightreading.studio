@@ -109,6 +109,42 @@
     box-shadow: 0 16px 28px rgba(11, 49, 97, 0.6);
 }
 
+.dark .result-metric-card h2 {
+    color: #8ea2c0;
+}
+
+.dark .result-metric-value {
+    color: #e5ecf8;
+}
+
+.dark .result-metric-value span {
+    color: #8ea2c0;
+}
+
+.dark .result-speed-delta.up {
+    color: #4ad7a0;
+}
+
+.dark .result-note-badge {
+    border-color: #7c3030;
+    background: #2d171d;
+    color: #ff9c9c;
+}
+
+.dark .result-note-badge.success {
+    border-color: #1f6550;
+    background: #0f2d26;
+    color: #7ce7bf;
+}
+
+.dark .result-row-title {
+    color: #e5ecf8;
+}
+
+.dark .result-footer-text {
+    color: #8ea2c0;
+}
+
 .dark .toggle-track {
     background: #38485f;
 }

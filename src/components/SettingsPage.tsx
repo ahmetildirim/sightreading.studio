@@ -25,7 +25,7 @@ export default function SettingsPage({
             <AppTopBar
                 rightSlot={
                     <button type="button" className="back-button" onClick={onBack}>
-                        <span>Back to Practice</span>
+                        <span>Back to practice</span>
                         <span className="material-symbols-outlined">close</span>
                     </button>
                 }
@@ -49,7 +49,7 @@ export default function SettingsPage({
 
                             <div className="toggle-row">
                                 <div>
-                                    <h3>Dark Mode</h3>
+                                    <h3>Dark mode</h3>
                                     <p>Switch between light and dark themes.</p>
                                 </div>
                                 <label className="switch" htmlFor="dark-mode-toggle">
@@ -70,11 +70,11 @@ export default function SettingsPage({
                                 <div className="settings-icon-box">
                                     <span className="material-symbols-outlined">piano</span>
                                 </div>
-                                <h2>MIDI Input Device</h2>
+                                <h2>MIDI input device</h2>
                             </div>
 
                             <label className="settings-field" htmlFor="midi-device-select">
-                                Select MIDI Device
+                                Select MIDI device
                             </label>
 
                             <div className="select-wrap">
@@ -101,7 +101,7 @@ export default function SettingsPage({
                                 className={`device-status ${midiConnected ? "connected" : "disconnected"}`}
                             >
                                 <span className="status-dot" aria-hidden />
-                                <span>{midiConnected ? "Device Connected" : "No Device Detected"}</span>
+                                <span>{midiConnected ? "Device connected" : "No device detected"}</span>
                             </div>
 
                             <div className="settings-info">
@@ -114,7 +114,7 @@ export default function SettingsPage({
                         </div>
 
                         <div className="settings-bottom-row">
-                            <span>Version 1.0.2 (Build 8420)</span>
+                            <span>Version 1.0.2 (build 8420)</span>
                         </div>
                     </section>
 

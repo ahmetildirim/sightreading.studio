@@ -73,7 +73,7 @@ export default function PracticePlayerPage({
                 <div className="practice-header-inner">
                     <div className="practice-session-meta">
                         <h2>Practice session</h2>
-                        <p>Range: {rangeLabel} | {totalNotes} Notes</p>
+                        <p>Range: {rangeLabel} | {totalNotes} notes</p>
                     </div>
 
                     <div className="practice-header-center">
