@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>88keys.app Practice Player</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#ffffff",
+                        "background-dark": "#101922",
+                        "staff-black": "#1a1a1a",
+                        "feedback-success": "#10B981",
+                        "feedback-error": "#F43F5E",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>.staff-line { stroke: #1a1a1a; stroke-width: 2; }
+        .bar-line { stroke: #1a1a1a; stroke-width: 2; }
+        .stem { stroke: #1a1a1a; stroke-width: 2; }
+        .note-head { fill: #1a1a1a; }
+        .note-success .note-head { fill: #10B981; }
+        .note-success .stem { stroke: #10B981; }
+        .note-error .note-head { fill: #F43F5E; }
+        .note-error .stem { stroke: #F43F5E; }
+        .cursor-line { stroke: #137fec; stroke-width: 2; opacity: 0.6; }
+    </style>
+</head>
+<body class="bg-background-light font-display h-screen flex flex-col overflow-hidden text-slate-800">
+<header class="bg-white px-6 py-4 flex items-center justify-center z-20 relative border-b border-slate-100">
+<div class="bg-slate-50 border border-slate-200 rounded-full px-6 py-1.5 flex items-center space-x-4 text-sm font-medium text-slate-600 shadow-sm">
+<div class="flex items-center space-x-2">
+<span class="material-icons text-slate-400 text-base">tune</span>
+<span>Range: C3 - C6</span>
+</div>
+<div class="h-4 w-px bg-slate-300"></div>
+<div class="flex items-center space-x-2">
+<span class="material-icons text-slate-400 text-base">music_note</span>
+<span>Notes: 50</span>
+</div>
+<div class="h-4 w-px bg-slate-300"></div>
+<div class="flex items-center space-x-2">
+<span class="material-icons text-slate-400 text-base">vpn_key</span>
+<span>Key: C Maj</span>
+</div>
+</div>
+</header>
+<main class="flex-1 relative bg-white flex flex-col justify-center items-center overflow-hidden">
+<div class="w-full h-full max-w-7xl mx-auto flex items-center justify-center p-8 overflow-hidden relative">
+<svg class="w-full h-auto max-h-[80vh] drop-shadow-sm select-none" preserveAspectRatio="xMidYMid meet" viewBox="0 0 800 320">
+<desc>Musical grand staff showing treble and bass clef with notes</desc>
+<rect fill="#137fec" fill-opacity="0.03" height="280" rx="8" width="200" x="220" y="10"></rect>
+<g transform="translate(0, 80)">
+<line class="staff-line" x1="0" x2="800" y1="0" y2="0"></line>
+<line class="staff-line" x1="0" x2="800" y1="20" y2="20"></line>
+<line class="staff-line" x1="0" x2="800" y1="40" y2="40"></line>
+<line class="staff-line" x1="0" x2="800" y1="60" y2="60"></line>
+<line class="staff-line" x1="0" x2="800" y1="80" y2="80"></line>
+<text fill="#1a1a1a" font-family="serif" font-size="70" x="10" y="65">𝄞</text>
+<text fill="#1a1a1a" font-family="serif" font-size="40" font-weight="bold" x="50" y="40">4</text>
+<text fill="#1a1a1a" font-family="serif" font-size="40" font-weight="bold" x="50" y="80">4</text>
+<g class="note-success" transform="translate(100, 0)">
+<ellipse class="note-head" cx="0" cy="70" rx="10" ry="7" transform="rotate(-15)"></ellipse>
+<line class="stem" x1="9" x2="9" y1="70" y2="30"></line>
+</g>
+<g class="note-success" transform="translate(140, 0)">
+<ellipse class="note-head" cx="0" cy="60" rx="10" ry="7" transform="rotate(-15)"></ellipse>
+<line class="stem" x1="9" x2="9" y1="60" y2="20"></line>
+</g>
+<g class="note-success" transform="translate(180, 0)">
+<ellipse class="note-head" cx="0" cy="50" rx="10" ry="7" transform="rotate(-15)"></ellipse>
+<line class="stem" x1="9" x2="9" y1="50" y2="10"></line>
+</g>
+<line class="bar-line" x1="220" x2="220" y1="0" y2="80"></line>
+<g class="note-success" transform="translate(260, 0)">
+<ellipse class="note-head" cx="0" cy="40" rx="10" ry="7" transform="rotate(-15)"></ellipse> 
+<line class="stem" x1="9" x2="9" y1="40" y2="0"></line>
+</g>
+<g class="note-error" transform="translate(300, 0)">
+<ellipse class="note-head" cx="0" cy="30" rx="10" ry="7" transform="rotate(-15)"></ellipse> 
+<line class="stem" x1="-9" x2="-9" y1="35" y2="80"></line>
+</g>
+<g transform="translate(340, 0)">
+<ellipse class="note-head" cx="0" cy="20" rx="10" ry="7" transform="rotate(-15)"></ellipse> 
+<line class="stem" x1="-9" x2="-9" y1="25" y2="70"></line>
+</g>
+<g transform="translate(380, 0)">
+<ellipse class="note-head" cx="0" cy="10" rx="10" ry="7" transform="rotate(-15)"></ellipse> 
+<line class="stem" x1="-9" x2="-9" y1="15" y2="60"></line>
+</g>
+<line class="bar-line" x1="420" x2="420" y1="0" y2="80"></line>
+<g transform="translate(460, 0)">
+<ellipse class="note-head" cx="0" cy="0" rx="10" ry="7" transform="rotate(-15)"></ellipse>
+<line class="stem" x1="-9" x2="-9" y1="5" y2="50"></line>
+</g>
+</g>
+<g transform="translate(0, 220)">
+<line class="staff-line" x1="0" x2="800" y1="0" y2="0"></line>
+<line class="staff-line" x1="0" x2="800" y1="20" y2="20"></line>
+<line class="staff-line" x1="0" x2="800" y1="40" y2="40"></line>
+<line class="staff-line" x1="0" x2="800" y1="60" y2="60"></line>
+<line class="staff-line" x1="0" x2="800" y1="80" y2="80"></line>
+<text fill="#1a1a1a" font-family="serif" font-size="60" x="10" y="55">𝄢</text>
+<text fill="#1a1a1a" font-family="serif" font-size="40" font-weight="bold" x="50" y="40">4</text>
+<text fill="#1a1a1a" font-family="serif" font-size="40" font-weight="bold" x="50" y="80">4</text>
+<g class="note-success" transform="translate(140, 0)">
+<ellipse cx="0" cy="50" fill="none" rx="14" ry="9" stroke="#10B981" stroke-width="2" transform="rotate(-15)"></ellipse>
+</g>
+<line class="bar-line" x1="220" x2="220" y1="0" y2="80"></line>
+<g transform="translate(320, 0)">
+<ellipse cx="0" cy="40" fill="none" rx="14" ry="9" stroke="#1a1a1a" stroke-width="2" transform="rotate(-15)"></ellipse>
+</g>
+<line class="bar-line" x1="420" x2="420" y1="0" y2="80"></line>
+</g>
+<line stroke="#1a1a1a" stroke-width="4" x1="0" x2="0" y1="80" y2="300"></line>
+<line class="cursor-line" stroke-dasharray="4" x1="320" x2="320" y1="60" y2="320"></line>
+<g transform="translate(310, 50)">
+<rect fill="#137fec" height="14" rx="4" width="20"></rect>
+<polygon fill="#137fec" points="5,14 15,14 10,20"></polygon>
+</g>
+</svg>
+</div>
+<div class="absolute top-10 pointer-events-none">
+<div class="bg-feedback-error/10 text-feedback-error border border-feedback-error/20 px-4 py-2 rounded-full text-base font-medium shadow-sm backdrop-blur-sm animate-pulse">
+                Missed C3
+            </div>
+</div>
+</main>
+<footer class="bg-white z-20 pb-8 pt-4">
+<div class="max-w-7xl mx-auto px-6 flex justify-between items-end">
+<div class="flex space-x-8 text-sm text-slate-500 font-medium">
+<div class="flex flex-col">
+<span class="text-xs text-slate-400 uppercase tracking-wider mb-1">Accuracy</span>
+<div class="flex items-center space-x-2">
+<span class="w-2 h-2 rounded-full bg-feedback-success"></span>
+<span class="text-slate-800 text-lg font-semibold">94%</span>
+</div>
+</div>
+<div class="flex flex-col">
+<span class="text-xs text-slate-400 uppercase tracking-wider mb-1">Progress</span>
+<div class="flex items-center space-x-2">
+<span class="text-slate-800 text-lg font-semibold">12/50</span>
+</div>
+</div>
+</div>
+<button class="bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center space-x-2">
+<span class="material-icons text-sm">flag</span>
+<span>Finish Session</span>
+</button>
+</div>
+</footer>
+
+</body></html>
