@@ -73,7 +73,6 @@ export default function GeneratorSetupPage({
                     <header className="setup-intro">
                         <p className="section-kicker">Generator setup</p>
                         <h1>Build your next sight-reading run</h1>
-                        <p>Monochrome precision mode with a focused, studio-style control surface.</p>
                     </header>
 
                     <section className="setup-card">
