@@ -1,33 +1,35 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import type { StaffHandle } from "./components/Staff";
-import GeneratorSetupPage from "./components/GeneratorSetupPage";
-import PracticePlayerPage from "./components/PracticePlayerPage";
-import SessionResultPage from "./components/SessionResultPage";
-import SettingsPage from "./components/SettingsPage";
-import AboutPage from "./components/AboutPage";
-import { MOCK_PREVIOUS_SESSIONS } from "./config/mockPreviousSessions";
-import { CURSOR_STYLES } from "./config/presets";
+import { AboutPage } from "./features/about";
 import {
-  DEFAULT_MIN_NOTE,
+  midiStatusLabel,
+  midiToNoteLabel,
+  useMidiDevices,
+  useMidiInput,
+} from "./features/midi";
+import { MISSED_MESSAGE_TIMEOUT_MS } from "./features/practice/constants";
+import { CURSOR_STYLES } from "./features/practice/config/cursorStyles";
+import type { CursorFeedback } from "./features/practice/types";
+import {
+  PracticePlayerPage,
+  type StaffHandle,
+} from "./features/practice";
+import { SessionResultPage } from "./features/results";
+import { useSightReadingSession, useTimer } from "./features/session";
+import { SettingsPage } from "./features/settings";
+import type { ThemeMode } from "./features/settings/types";
+import { MOCK_PREVIOUS_SESSIONS } from "./features/setup/config/mockPreviousSessions";
+import {
   DEFAULT_MAX_NOTE,
+  DEFAULT_MIN_NOTE,
   DEFAULT_TOTAL_NOTES,
-  MIN_TOTAL_NOTES,
   MAX_TOTAL_NOTES,
-  MISSED_MESSAGE_TIMEOUT_MS,
-} from "./constants";
+  MIN_TOTAL_NOTES,
+} from "./features/setup/constants";
+import { GeneratorSetupPage } from "./features/setup";
 import { NOTE_NAMES, generateScore, type NoteName } from "./generator";
-import useMidiDevices from "./hooks/useMidiDevices";
-import useMidiInput from "./hooks/useMidiInput";
-import useSightReadingSession from "./hooks/useSightReadingSession";
-import useTimer from "./hooks/useTimer";
-import type {
-  AppPage,
-  CursorFeedback,
-  ReturnPage,
-  ThemeMode,
-} from "./types";
-import { clamp, formatTime, midiStatusLabel, midiToNoteLabel } from "./utils";
+import type { AppPage, ReturnPage } from "./app/types";
+import { clamp, formatTime } from "./utils";
 
 // ---------------------------------------------------------------------------
 // Helpers

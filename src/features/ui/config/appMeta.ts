@@ -1,4 +1,4 @@
-import packageJson from "../../package.json";
+import packageJson from "../../../../package.json";
 
 export const APP_NAME = "88keys";
 export const APP_RELEASE_STAGE = "Beta";

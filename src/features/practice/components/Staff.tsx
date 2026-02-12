@@ -1,16 +1,3 @@
-/**
- * Staff — renders a MusicXML score using OpenSheetMusicDisplay (OSMD).
- *
- * This component manages the full OSMD lifecycle:
- *   1. Creates the renderer once (lazy initialization on first render)
- *   2. Re-renders whenever `scoreXml` changes
- *   3. Updates cursor color/opacity whenever `cursorStyle` changes
- *
- * The parent controls cursor position via the imperative `StaffHandle` ref,
- * keeping the "which note is current" logic in the parent (App) while this
- * component focuses purely on rendering.
- */
-
 import {
   forwardRef,
   useCallback,
@@ -20,14 +7,8 @@ import {
 } from "react";
 import { OpenSheetMusicDisplay } from "opensheetmusicdisplay";
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
 interface StaffProps {
-  /** Complete MusicXML document string to render. */
   scoreXml: string;
-  /** Visual style for the playback cursor. */
   cursorStyle: CursorStyle;
 }
 
@@ -36,24 +17,12 @@ interface CursorStyle {
   alpha: number;
 }
 
-/** Imperative handle exposed to parent components via ref. */
 export interface StaffHandle {
-  /** Advance the cursor to the next note position. */
   nextCursor(): void;
-  /** Reset the cursor to the first note. */
   resetCursor(): void;
 }
 
-// ---------------------------------------------------------------------------
-// Constants
-// ---------------------------------------------------------------------------
-
-/** Zoom level for the rendered score (1.5× for readability). */
 const SCORE_ZOOM = 1.5;
-
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
 
 const Staff = forwardRef<StaffHandle, StaffProps>(function Staff(
   { scoreXml, cursorStyle },
@@ -62,12 +31,9 @@ const Staff = forwardRef<StaffHandle, StaffProps>(function Staff(
   const containerRef = useRef<HTMLDivElement>(null);
   const osmdRef = useRef<OpenSheetMusicDisplay | null>(null);
 
-  // Keep a mutable ref to the latest cursor style so the score-render
-  // effect can apply the current style without depending on it.
   const cursorStyleRef = useRef(cursorStyle);
   cursorStyleRef.current = cursorStyle;
 
-  /** Applies color and opacity to the OSMD cursor element. */
   const applyCursorStyle = useCallback((style: CursorStyle) => {
     const cursor = osmdRef.current?.cursor;
     if (!cursor) return;
@@ -91,7 +57,6 @@ const Staff = forwardRef<StaffHandle, StaffProps>(function Staff(
     return root.parentElement instanceof HTMLElement ? root.parentElement : null;
   }, []);
 
-  /** Keep the cursor horizontally visible inside the score viewport. */
   const scrollCursorIntoView = useCallback(
     (behavior: ScrollBehavior) => {
       const scrollContainer = getScrollContainer();
@@ -124,7 +89,6 @@ const Staff = forwardRef<StaffHandle, StaffProps>(function Staff(
     [getScrollContainer],
   );
 
-  /** Lazily creates the OSMD instance (exactly once per mount). */
   const getOrCreateOsmd = useCallback((): OpenSheetMusicDisplay | null => {
     if (osmdRef.current) return osmdRef.current;
     if (!containerRef.current) return null;
@@ -143,7 +107,6 @@ const Staff = forwardRef<StaffHandle, StaffProps>(function Staff(
     return osmdRef.current;
   }, []);
 
-  // Expose imperative cursor controls to the parent.
   useImperativeHandle(ref, () => ({
     nextCursor: () => {
       osmdRef.current?.cursor?.next();
@@ -161,7 +124,6 @@ const Staff = forwardRef<StaffHandle, StaffProps>(function Staff(
     },
   }), [getScrollContainer, scrollCursorIntoView]);
 
-  // Load and render the score whenever the XML changes.
   useEffect(() => {
     const osmd = getOrCreateOsmd();
     if (!osmd) return;
@@ -185,7 +147,6 @@ const Staff = forwardRef<StaffHandle, StaffProps>(function Staff(
     };
   }, [scoreXml, getOrCreateOsmd, applyCursorStyle, getScrollContainer]);
 
-  // Update cursor appearance independently of score rendering.
   useEffect(() => {
     applyCursorStyle(cursorStyle);
   }, [cursorStyle, applyCursorStyle]);

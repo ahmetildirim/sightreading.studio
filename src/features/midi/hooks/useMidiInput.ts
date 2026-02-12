@@ -1,37 +1,8 @@
-/**
- * React hook for connecting to MIDI input devices via the Web MIDI API.
- *
- * Listens for Note On / Note Off messages from all connected MIDI inputs
- * and dispatches callbacks. Tracks which keys are currently held down to
- * correctly detect the "all keys released" state.
- *
- * ## Relevant MIDI message format
- *
- *   Byte 0 (status): upper nibble = command, lower nibble = channel
- *     0x90 = Note On
- *     0x80 = Note Off
- *   Byte 1: note number (0–127, middle C = 60)
- *   Byte 2: velocity (0–127; Note On with velocity 0 ≡ Note Off)
- */
-
 import { useEffect, useRef, useState } from "react";
 
-// ---------------------------------------------------------------------------
-// MIDI protocol constants
-// ---------------------------------------------------------------------------
-
-/** Bitmask to extract the command from a MIDI status byte. */
 const COMMAND_MASK = 0xf0;
-/** MIDI command: a key was pressed. */
 const NOTE_ON = 0x90;
-/** MIDI command: a key was released. */
 const NOTE_OFF = 0x80;
-
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-/** Human-readable MIDI connection status shown in the UI footer. */
 export type MidiStatus =
     | "Checking MIDI support…"
     | "MIDI: connected"
@@ -39,26 +10,11 @@ export type MidiStatus =
     | "MIDI: not supported in this browser"
     | "MIDI: permission denied";
 
-/** Callbacks fired in response to MIDI key events. */
 export interface MidiCallbacks {
-    /** A key was pressed. `note` is the MIDI note number (0–127). */
     onNoteOn?: (note: number, velocity: number) => void;
-    /** A key was released. */
     onNoteOff?: (note: number) => void;
-    /** All previously held keys have been released. */
     onAllNotesOff?: () => void;
 }
-
-// ---------------------------------------------------------------------------
-// Hook
-// ---------------------------------------------------------------------------
-
-/**
- * Connects to all available MIDI inputs and dispatches note events.
- *
- * Returns a human-readable status string describing the connection state.
- * Automatically cleans up listeners on unmount or when callbacks change.
- */
 export default function useMidiInput(callbacks: MidiCallbacks): MidiStatus {
     const { onNoteOn, onNoteOff, onAllNotesOff } = callbacks;
     const [status, setStatus] = useState<MidiStatus>("Checking MIDI support…");
@@ -78,7 +34,6 @@ export default function useMidiInput(callbacks: MidiCallbacks): MidiStatus {
             const [statusByte, note, velocity] = event.data;
             const command = statusByte & COMMAND_MASK;
 
-            // Key released: explicit Note Off, or Note On with velocity 0.
             if (command === NOTE_OFF || (command === NOTE_ON && velocity === 0)) {
                 heldNotes.current.delete(note);
                 onNoteOff?.(note);
@@ -88,7 +43,6 @@ export default function useMidiInput(callbacks: MidiCallbacks): MidiStatus {
                 return;
             }
 
-            // Key pressed: only fire once per key (ignore repeated Note On).
             if (command === NOTE_ON && !heldNotes.current.has(note)) {
                 heldNotes.current.add(note);
                 onNoteOn?.(note, velocity);
