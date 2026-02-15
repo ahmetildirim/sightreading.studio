@@ -56,6 +56,8 @@ function clampNoteCount(value: number): number {
 
 type SessionResult = {
   accuracy: number;
+  errorCount: number;
+  longestStreak: number;
   speedNpm: number;
   speedDelta: number;
   improvements: { note: string; misses: number }[];
@@ -111,6 +113,8 @@ export default function App() {
   const [completedNotes, setCompletedNotes] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const [correctAttempts, setCorrectAttempts] = useState(0);
+  const [currentStreak, setCurrentStreak] = useState(0);
+  const [longestStreak, setLongestStreak] = useState(0);
   const [missedMessage, setMissedMessage] = useState<string | null>(null);
   const [autoFinishToken, setAutoFinishToken] = useState(0);
   const [missedNoteCounts, setMissedNoteCounts] = useState<Record<string, number>>({});
@@ -252,6 +256,8 @@ export default function App() {
     setCompletedNotes(0);
     setAttempts(0);
     setCorrectAttempts(0);
+    setCurrentStreak(0);
+    setLongestStreak(0);
     setAutoFinishToken(0);
     setMissedNoteCounts({});
     resetTimer();
@@ -274,10 +280,16 @@ export default function App() {
 
       if (result === "correct") {
         setCorrectAttempts((value) => value + 1);
+        setCurrentStreak((value) => {
+          const nextStreak = value + 1;
+          setLongestStreak((currentMax) => Math.max(currentMax, nextStreak));
+          return nextStreak;
+        });
         setCursorFeedback("correct");
         return;
       }
 
+      setCurrentStreak(0);
       setCursorFeedback("wrong");
       const noteLabel = midiToNoteLabel(note);
       setMissedNoteCounts((value) => ({
@@ -331,6 +343,7 @@ export default function App() {
 
   const accuracy =
     attempts === 0 ? 100 : Math.round((correctAttempts / attempts) * 100);
+  const errorCount = Math.max(0, attempts - correctAttempts);
   const elapsedSeconds = Math.floor(elapsedMs / 1000);
 
   const rangeSummary =
@@ -432,6 +445,8 @@ export default function App() {
 
     const nextResult: SessionResult = {
       accuracy,
+      errorCount,
+      longestStreak,
       speedNpm,
       speedDelta,
       improvements,
@@ -467,6 +482,8 @@ export default function App() {
   }, [
     accuracy,
     completedNotes,
+    errorCount,
+    longestStreak,
     maxNote,
     minNote,
     missedNoteCounts,
@@ -565,6 +582,8 @@ export default function App() {
               totalNotes={totalNotes}
               completedNotes={completedNotes}
               accuracy={accuracy}
+              errorCount={errorCount}
+              currentStreak={currentStreak}
               elapsedTimeLabel={formatTime(elapsedSeconds)}
               timerRunning={timerRunning}
               onToggleTimer={toggleTimer}
@@ -581,6 +600,8 @@ export default function App() {
             sessionResult ? (
               <ResultsPage
                 accuracy={sessionResult.accuracy}
+                errorCount={sessionResult.errorCount}
+                longestStreak={sessionResult.longestStreak}
                 speedNpm={sessionResult.speedNpm}
                 speedDelta={sessionResult.speedDelta}
                 improvements={sessionResult.improvements}

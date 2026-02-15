@@ -9,6 +9,8 @@ type ImprovementItem = {
 
 interface SessionResultPageProps {
     accuracy: number;
+    errorCount: number;
+    longestStreak: number;
     speedNpm: number;
     speedDelta: number;
     improvements: ImprovementItem[];
@@ -20,6 +22,8 @@ interface SessionResultPageProps {
 
 export default function SessionResultPage({
     accuracy,
+    errorCount,
+    longestStreak,
     speedNpm,
     speedDelta,
     improvements,
@@ -75,6 +79,19 @@ export default function SessionResultPage({
                         <article className="result-metric-card">
                             <h2>Total time</h2>
                             <div className="result-metric-value time">{durationLabel}</div>
+                        </article>
+
+                        <article className="result-metric-card">
+                            <h2>Errors</h2>
+                            <div className="result-metric-value negative">{errorCount}</div>
+                        </article>
+
+                        <article className="result-metric-card">
+                            <h2>Longest streak</h2>
+                            <div className="result-metric-value accent">
+                                {longestStreak}
+                                <span>notes</span>
+                            </div>
                         </article>
                     </div>
 

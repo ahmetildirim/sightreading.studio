@@ -1114,6 +1114,26 @@ input[type="number"] {
     color: var(--positive);
 }
 
+.practice-stat-chip.danger {
+    border-color: color-mix(in srgb, var(--negative) 44%, var(--line));
+    background: color-mix(in srgb, var(--negative) 12%, var(--surface-2));
+}
+
+.practice-stat-chip.danger .material-symbols-outlined,
+.practice-stat-chip.danger .practice-stat-value {
+    color: var(--negative);
+}
+
+.practice-stat-chip.streak {
+    border-color: color-mix(in srgb, var(--accent) 38%, var(--line));
+    background: color-mix(in srgb, var(--accent) 12%, var(--surface-2));
+}
+
+.practice-stat-chip.streak .material-symbols-outlined,
+.practice-stat-chip.streak .practice-stat-value {
+    color: color-mix(in srgb, var(--accent) 72%, var(--positive) 28%);
+}
+
 .practice-progress-row {
     width: min(100%, 640px);
     display: grid;
@@ -1286,7 +1306,7 @@ input[type="number"] {
 
 .result-metrics {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 10px;
 }
 
@@ -1319,6 +1339,14 @@ input[type="number"] {
 
 .result-metric-value.primary {
     color: color-mix(in srgb, var(--accent) 78%, var(--positive) 22%);
+}
+
+.result-metric-value.negative {
+    color: var(--negative);
+}
+
+.result-metric-value.accent {
+    color: color-mix(in srgb, var(--accent) 76%, var(--positive) 24%);
 }
 
 .result-metric-value span {

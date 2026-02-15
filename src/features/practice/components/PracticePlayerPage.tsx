@@ -12,6 +12,8 @@ interface PracticePlayerPageProps {
     totalNotes: number;
     completedNotes: number;
     accuracy: number;
+    errorCount: number;
+    currentStreak: number;
     elapsedTimeLabel: string;
     timerRunning: boolean;
     onToggleTimer: () => void;
@@ -28,6 +30,8 @@ export default function PracticePlayerPage({
     totalNotes,
     completedNotes,
     accuracy,
+    errorCount,
+    currentStreak,
     elapsedTimeLabel,
     timerRunning,
     onToggleTimer,
@@ -105,6 +109,16 @@ export default function PracticePlayerPage({
                             <div className="practice-stat-chip success">
                                 <span className="material-symbols-outlined">check_circle</span>
                                 <span className="practice-stat-value mono">{accuracy}%</span>
+                            </div>
+
+                            <div className="practice-stat-chip danger">
+                                <span className="material-symbols-outlined">cancel</span>
+                                <span className="practice-stat-value mono">{errorCount}</span>
+                            </div>
+
+                            <div className="practice-stat-chip streak">
+                                <span className="material-symbols-outlined">local_fire_department</span>
+                                <span className="practice-stat-value mono">{currentStreak}</span>
                             </div>
                         </div>
 
