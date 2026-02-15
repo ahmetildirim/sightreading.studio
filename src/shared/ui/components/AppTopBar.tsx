@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { APP_DOMAIN, APP_NAME, APP_RELEASE_STAGE } from "../../config/appMeta";
+import { APP_NAME, APP_RELEASE_STAGE, APP_TITLE } from "../../config/appMeta";
 
 interface AppTopBarProps {
     rightSlot?: ReactNode;
@@ -14,8 +14,8 @@ export default function AppTopBar({ rightSlot }: AppTopBarProps) {
                         {APP_NAME}
                     </span>
                     <span className="app-brand-wordmark">
-                        <strong>{APP_DOMAIN}</strong>
-                        <small>{APP_NAME} · {APP_RELEASE_STAGE}</small>
+                        <strong>{APP_TITLE}</strong>
+                        <small>{APP_RELEASE_STAGE}</small>
                     </span>
                 </div>
 
