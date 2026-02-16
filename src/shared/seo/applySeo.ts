@@ -1,4 +1,4 @@
-import { APP_NAME } from "../config/appMeta";
+import { APP_TITLE } from "../config/appMeta";
 import {
   absoluteUrl,
   DEFAULT_OG_IMAGE_PATH,
@@ -8,6 +8,7 @@ import {
 } from "../config/seo";
 
 const PAGE_JSON_LD_ID = "srl-webpage-jsonld";
+const BREADCRUMB_JSON_LD_ID = "srl-breadcrumb-jsonld";
 
 function ensureMetaTag(attribute: "name" | "property", key: string): HTMLMetaElement {
   const selector = `meta[${attribute}="${key}"]`;
@@ -60,6 +61,11 @@ function setJsonLd(id: string, data: Record<string, unknown>): void {
   }
 }
 
+function pageLabelFromPath(path: string): string {
+  const segment = path.replace(/^\/+/, "") || "home";
+  return segment.charAt(0).toUpperCase() + segment.slice(1);
+}
+
 export function applySeo(seo: RouteSeoConfig): void {
   const canonicalUrl = absoluteUrl(seo.canonicalPath);
   const ogImageUrl = absoluteUrl(DEFAULT_OG_IMAGE_PATH);
@@ -69,14 +75,18 @@ export function applySeo(seo: RouteSeoConfig): void {
   setMetaContent("name", "description", seo.description);
   setMetaContent("name", "robots", seo.robots);
   setMetaContent("name", "keywords", DEFAULT_SEO_KEYWORDS);
+  setMetaContent("name", "author", APP_TITLE);
 
   setMetaContent("property", "og:type", seo.ogType ?? "website");
-  setMetaContent("property", "og:site_name", APP_NAME);
+  setMetaContent("property", "og:locale", "en_US");
+  setMetaContent("property", "og:site_name", APP_TITLE);
   setMetaContent("property", "og:title", seo.title);
   setMetaContent("property", "og:description", seo.description);
   setMetaContent("property", "og:url", canonicalUrl);
   setMetaContent("property", "og:image", ogImageUrl);
-  setMetaContent("property", "og:image:alt", `${APP_NAME} piano sight-reading app preview`);
+  setMetaContent("property", "og:image:alt", `${APP_TITLE} — piano sight-reading practice app`);
+  setMetaContent("property", "og:image:width", "512");
+  setMetaContent("property", "og:image:height", "512");
 
   setMetaContent("name", "twitter:card", "summary_large_image");
   setMetaContent("name", "twitter:title", seo.title);
@@ -86,16 +96,47 @@ export function applySeo(seo: RouteSeoConfig): void {
   const canonicalLink = ensureCanonicalLink();
   canonicalLink.href = canonicalUrl;
 
+  // WebPage structured data
   setJsonLd(PAGE_JSON_LD_ID, {
     "@context": "https://schema.org",
     "@type": "WebPage",
     name: seo.title,
     description: seo.description,
     url: canonicalUrl,
+    inLanguage: "en",
     isPartOf: {
       "@type": "WebSite",
-      name: APP_NAME,
+      name: APP_TITLE,
       url: SITE_ORIGIN,
     },
+    publisher: {
+      "@type": "Organization",
+      name: APP_TITLE,
+      url: SITE_ORIGIN,
+      logo: {
+        "@type": "ImageObject",
+        url: ogImageUrl,
+      },
+    },
+  });
+
+  // BreadcrumbList structured data
+  setJsonLd(BREADCRUMB_JSON_LD_ID, {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: APP_TITLE,
+        item: SITE_ORIGIN,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: pageLabelFromPath(seo.canonicalPath),
+        item: canonicalUrl,
+      },
+    ],
   });
 }

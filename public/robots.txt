@@ -1,5 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /practice
+Disallow: /results
+Disallow: /settings
 
 Sitemap: https://sightreadinglabs.com/sitemap.xml
 Host: https://sightreadinglabs.com

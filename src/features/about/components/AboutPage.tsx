@@ -3,7 +3,6 @@ import BackButton from "../../../shared/ui/components/BackButton";
 import {
     APP_CONTACT_EMAIL,
     APP_DOMAIN,
-    APP_NAME,
     APP_RELEASE_STAGE,
     APP_VERSION,
 } from "../../../shared/config/appMeta";
@@ -28,14 +27,16 @@ export default function AboutPage({ onBack }: AboutPageProps) {
                             <span className="material-symbols-outlined">piano</span>
                         </div>
 
-                        <h1>About {APP_NAME} ({APP_RELEASE_STAGE})</h1>
+                        <h1>About Sight Reading Labs ({APP_RELEASE_STAGE})</h1>
                         <div className="about-divider" aria-hidden />
 
                         <p>
-                            As a new piano student, I struggled to find a sight-reading app that
-                            truly supported beginners. Most tools felt either too complex or not
-                            focused enough on consistent practice. So I built a simple, focused app
-                            designed to make daily sight-reading practice easier and more effective.
+                            <strong>Sight Reading Labs</strong> is a free piano sight-reading practice
+                            app built for beginners. As a new piano student, I struggled to find a
+                            sight-reading tool that truly supported beginners. Most apps felt either
+                            too complex or not focused enough on consistent practice. So I built a
+                            simple, focused app designed to make daily sight-reading practice easier
+                            and more effective.
                         </p>
 
                         <p>

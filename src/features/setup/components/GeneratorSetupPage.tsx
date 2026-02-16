@@ -191,10 +191,6 @@ export default function GeneratorSetupPage({
 
             <main className="setup-main">
                 <div className="setup-wrapper">
-                    {/* <header className="setup-intro">
-            <p className="section-kicker">Generator configuration</p>
-            <h1>Build your next sight-reading run</h1>
-          </header> */}
 
                     <div className="setup-content">
                         <aside className="setup-side-panel trainings-panel">
