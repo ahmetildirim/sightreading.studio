@@ -42,7 +42,7 @@ export const APP_ROUTE_SEO: Record<AppPage, RouteSeoConfig> = {
   practice: {
     title: `Practice Session — ${APP_TITLE}`,
     description:
-      "Live sight-reading practice session with real-time MIDI keyboard input and instant accuracy feedback. Part of Sight Reading Labs.",
+      "Live sight-reading practice session with real-time MIDI keyboard input and instant accuracy feedback. Part of sightreading.studio.",
     robots: "noindex, follow",
     canonicalPath: APP_ROUTES.practice,
     ogType: "website",
@@ -58,7 +58,7 @@ export const APP_ROUTE_SEO: Record<AppPage, RouteSeoConfig> = {
   settings: {
     title: `Settings — ${APP_TITLE}`,
     description:
-      "Configure MIDI device selection and appearance preferences for Sight Reading Labs.",
+      "Configure MIDI device selection and appearance preferences for sightreading.studio.",
     robots: "noindex, follow",
     canonicalPath: APP_ROUTES.settings,
     ogType: "website",
@@ -66,7 +66,7 @@ export const APP_ROUTE_SEO: Record<AppPage, RouteSeoConfig> = {
   about: {
     title: `About ${APP_TITLE} — Piano Sight-Reading Practice App`,
     description:
-      "Learn about Sight Reading Labs, a free and focused web app for daily piano sight-reading practice with MIDI keyboard support. No ads, no account, fully offline.",
+      "Learn about sightreading.studio, a free and focused web app for daily piano sight-reading practice with MIDI keyboard support. No ads, no account, fully offline.",
     robots: "index, follow, max-image-preview:large, max-snippet:-1",
     canonicalPath: APP_ROUTES.about,
     ogType: "article",

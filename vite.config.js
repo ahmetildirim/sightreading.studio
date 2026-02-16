@@ -9,8 +9,8 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["pwa-192.png", "pwa-512.png"],
       manifest: {
-        name: "Sight Reading Labs — Piano Sight-Reading Practice",
-        short_name: "SRL",
+        name: "sightreading.studio — Piano Sight-Reading Practice",
+        short_name: "SRS",
         description: "Free piano sight-reading practice app with MIDI keyboard support. Customize note ranges, track accuracy and speed, and practice entirely offline.",
         start_url: "/",
         scope: "/",

@@ -1,6 +1,6 @@
-# SRL
+# sightreading.studio
 
-SRL is a focused, beginner-friendly piano sight-reading practice app built with React and TypeScript.
+sightreading.studio is a focused, beginner-friendly piano sight-reading practice app built with React and TypeScript.
 
 ## Features
 
