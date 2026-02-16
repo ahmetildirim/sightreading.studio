@@ -191,19 +191,19 @@ input[type="number"] {
 }
 
 .app-brand-mark {
-    width: 34px;
-    height: 34px;
-    border-radius: 6px;
-    border: 1px solid var(--line-strong);
-    background: var(--accent);
-    color: var(--accent-contrast);
-    font-size: 0.66rem;
-    font-weight: 700;
+    width: 36px;
+    height: 36px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
+    flex: 0 0 auto;
+}
+
+.app-brand-mark img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
 }
 
 .app-brand-wordmark {
@@ -1949,8 +1949,8 @@ input[type="number"] {
     background: color-mix(in srgb, var(--bg) 78%, transparent);
 }
 
-.dark .app-brand-mark {
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+.dark .app-brand-mark img {
+    filter: invert(1);
 }
 
 .dark .practice-score {

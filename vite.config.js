@@ -7,7 +7,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["pwa-192.png", "pwa-512.png"],
+      includeAssets: ["favicon.ico", "favicon-light-32.png", "favicon-dark-32.png", "pwa-192.png", "pwa-512.png"],
       manifest: {
         name: "sightreading.studio — Piano Sight-Reading Practice",
         short_name: "SRS",
