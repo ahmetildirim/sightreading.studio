@@ -27,11 +27,11 @@ export default function AboutPage({ onBack }: AboutPageProps) {
                             <span className="material-symbols-outlined">piano</span>
                         </div>
 
-                        <h1>About Sight Reading Studio ({APP_RELEASE_STAGE})</h1>
+                        <h1>About Sight Reading Labs ({APP_RELEASE_STAGE})</h1>
                         <div className="about-divider" aria-hidden />
 
                         <p>
-                            <strong>Sight Reading Studio</strong> is a free piano sight-reading practice
+                            <strong>Sight Reading Labs</strong> is a free piano sight-reading practice
                             app built for beginners. As a new piano student, I struggled to find a
                             sight-reading tool that truly supported beginners. Most apps felt either
                             too complex or not focused enough on consistent practice. So I built a
@@ -54,7 +54,7 @@ export default function AboutPage({ onBack }: AboutPageProps) {
                         <p>
                             If you have suggestions, ideas, or encounter any issues, please{" "}
                             <a
-                                href="https://github.com/ahmetildirim/sightreading.studio/issues"
+                                href="https://github.com/ahmetildirim/sightreadinglabs/issues"
                                 target="_blank"
                                 rel="noreferrer"
                             >
@@ -77,7 +77,7 @@ export default function AboutPage({ onBack }: AboutPageProps) {
                             <div className="about-support-actions">
                                 <a
                                     className="about-support-button"
-                                    href="https://github.com/ahmetildirim/sightreading.studio"
+                                    href="https://github.com/ahmetildirim/sightreadinglabs"
                                     target="_blank"
                                     rel="noreferrer"
                                 >
